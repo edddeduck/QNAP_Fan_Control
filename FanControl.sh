@@ -56,6 +56,12 @@ echo "Fan2 Speed:     $fanSpeed2 RPM"
 echo " "
 echo "Setting Fan speeds..."
 
+# The mode= at the endof the fan speeds are the speed the fan is running at 0-7
+# The obj_index= is the fan on 8 bay QNAPs you'll have 2 - 0 & 1
+# You should check the correct fans are set below by checking which fan does what
+# using the command example at the top of this script. If you have a 4 bay QNAP you'll
+# only have one fan.
+
 # Fan Speed 1 (Reduced Mode)
 if (( cpuTemp < FanSpeed_1 )); then
 hal_app --se_sys_set_fan_mode enc_sys_id=root,obj_index=0,mode=1
@@ -110,6 +116,7 @@ hal_app --se_sys_set_fan_mode enc_sys_id=root,obj_index=0,mode=7
 hal_app --se_sys_set_fan_mode enc_sys_id=root,obj_index=1,mode=7
 fi
 
+# Check CPU temperature every 15 seconds
 sleep 15
 
 done
