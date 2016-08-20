@@ -10,10 +10,10 @@ HEALTH WARNING - This script is *not* wonderfully written, it was written as a q
 It's completely designed with my setup in mind but reading all of the other people who have similar issues but have no solution made me think I could share what I managed to work out so far.
 
 1. Copy the script onto to your QNAP
-2. Macke sure you have disabled fan speed on your QNAP and set the fans to manual (high) instead.
+2. Make sure you have disabled fan speed on your QNAP and set the fans to manual (high) instead.
 3. SSH into your machine and start the script
 4. Make sure you run the script in such a way it KEEPS RUNNING when you close your SSH session.
 
 The script uses a command that allows you to control the speed of the large QNAP fans individually. It then checks the CPU temperature and alters the fan speed accordingly. There are 8 levels of fan speed depending on the temperatures.
 
-I've have some rough notes in the script.
+I've have some rough notes in the script, please read the script before running it, some of the dual fan control suggestions/checks are important.
