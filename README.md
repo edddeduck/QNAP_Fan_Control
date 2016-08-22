@@ -1,5 +1,7 @@
 # QNAP_Fan_Control
-20th August 2016
+v1.0 - Initial Public release
+v1.1 - Modified by Tim Norton - 21/08/2016 -> Added multiple device support
+v1.2 - Modified by Edwin Smith- 23/08/2016 -> Added unsupported device check + minor fixes
 
 Basic Fan Control Script for QNAP Devices. This replaces the SMART fan control with a script that monitors your CPU temperature and alters the fan speed based on your CPU temperature.
 

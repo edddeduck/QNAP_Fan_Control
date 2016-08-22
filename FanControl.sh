@@ -2,6 +2,7 @@
 # Initially written by Edwin Smith
 # v1.0 - Initial Public release
 # v1.1 - Modified by Tim Norton - 21/08/2016
+# v1.2 - Modified by Edwin Smith- 23/08/2016
 
 #Warning that you use this at your own risk.
 echo "====================================================="
@@ -36,6 +37,9 @@ echo "only supports QNAP TS-870 and TS-853A models.        "
 # Grab Initial Info
 sysModel=$(getsysinfo model | awk '{print $1;}')   #What QNAP Model do we have
 
+# Set Supported Flag to False (Default)
+enableFanControl=0
+
 # Define 7 step modes based on CPU temperature for fans
 # You will need to define your own step points to suit your
 # fans and NAS.Also make sure the sysModel variable is set correctly
@@ -43,18 +47,29 @@ sysModel=$(getsysinfo model | awk '{print $1;}')   #What QNAP Model do we have
 
 if [ "$sysModel" = "TS-870" ]
 then
-cpuStepTemp=( 40 45 48 51 54 57 60 )      # TS-870 temps at which to change fan speed
-cpuStepFan1=( 2 2 3 3 4 4 7 )             # Fan modes for Fan1 to match cpu temp step changes
-cpuStepFan2=( 2 3 4 5 6 7 7 )             # Fan modes for Fan2 to match cpu temp step changes
+enableFanControl=1
+cpuStepTemp=( 43 45 47 49 51 54 58 )      # TS-870 temps at which to change fan speed
+cpuStepFan1=( 1 2 2 3 4 4 7 )             # Fan modes for Fan1 to match cpu temp step changes
+cpuStepFan2=( 2 2 3 4 5 6 7 )             # Fan modes for Fan2 to match cpu temp step changes
 fi
 
 if [ "$sysModel" = "TS-853A" ]
 then
+enableFanControl=1
 cpuStepTemp=( 30 32 34 38 40 42 44 )      # TS-853A temps at which to change fan speed
 cpuStepFan1=( 1 2 3 4 5 6 7 )             # Fan modes for Fan1 to match cpu temp step changes
 cpuStepFan2=( 1 2 3 4 5 6 7 )             # Fan modes for Fan2 to match cpu temp step changes
 fi
 
+# Check if your machine is listed as supported if not don't run fanControl and
+# output debug info instead.
+echo "==================================================="
+echo "Checking if your model is supported..."
+echo "==================================================="
+if (( $enableFanControl == 1 )); then
+echo "==================================================="
+echo "QNAP Model Supported  :     $sysModel"
+echo "==================================================="
 # Enter Loop
 while [ 1 ]
 do
@@ -83,7 +98,7 @@ echo "==================================================="
 echo "$(date)"
 echo "QNAP Model   :     $sysModel"
 echo "CPU Temp     :     $cpuTemp C"
-echo "Sytem Temp   :     $sysTemp C"
+echo "System Temp  :     $sysTemp C"
 echo "No. of Disks :     $hddNum"
 
 for (( i=1; i <= hddNum; i++ ))  #print out HDD/SDD individual temps
@@ -99,9 +114,7 @@ else
 echo "Fan1 Speed   :     ${fanSpeed[1]} RPM"
 echo "Fan2 Speed   :     ${fanSpeed[2]} RPM"
 fi
-echo "==================================================="
-echo "Checking for required Fan speed changes..."
-echo "==================================================="
+
 
 # The mode= at the endof the fan speeds are the speed the fan are running at 1-7.
 # Mode=0 is equivalent to mode=1
@@ -109,6 +122,10 @@ echo "==================================================="
 # You should check the correct fans are set below by checking which fan does what
 # using the command example at the top of this script. If you have a 4 bay QNAP you'll
 # only have one fan which the script handles.
+
+echo "==================================================="
+echo "Checking for required Fan speed changes..."
+echo "==================================================="
 
 # Fan Step Speed 1 set fan speed to lowest level set in cpuStepTemp
 if (( "$cpuTemp" < "${cpuStepTemp[0]}" ))
@@ -200,7 +217,6 @@ echo "Setting Fan 1 to Mode ${cpuStepFan1[6]} as cpu temperature above ${cpuStep
 	fi
 fi
 
-
 # Check CPU temperature every 15 seconds
 echo "==================================================="
 echo "Sleeping for 15 seconds"
@@ -208,4 +224,13 @@ echo "==================================================="
 sleep 15
 
 done
-#exit 0
+
+else 
+
+echo "========================================================"
+echo "Your model is not supported, please file an issue "
+echo "at https://github.com/edddeduck/QNAP_Fan_Control/issues"
+echo "include all the information above in the issue"
+echo "========================================================"
+
+fi
